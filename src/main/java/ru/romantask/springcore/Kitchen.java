@@ -73,41 +73,48 @@ public class Kitchen {
 
         result.setRemains(new Remains(getIngredientsStorage()));
 
-        while (!result.getRemains().getRemains().stream().filter(ingredient -> ingredient.getCount() == 0).findAny().isPresent()) {
+        while (finishDishesList.stream().noneMatch(FinishDishes::isAllPrepared)) {
             for (Dish dish : recipe) {
-                List<Boolean> allIngredients = new ArrayList<>();
                 List<Ingredients> neededIngredients = new ArrayList<>();
+                FinishDishes finishDishes;
+
+                if (finishDishesList.contains(new FinishDishes(dish.getName()))) {
+                    int indexFinishDishesList = finishDishesList.indexOf(new FinishDishes(dish.getName()));
+                    finishDishes = finishDishesList.get(indexFinishDishesList);
+                } else {
+                    finishDishes = new FinishDishes(dish.getName());
+                    finishDishesList.add(finishDishes);
+                }
+
                 for (Ingredients ingredient : dish.getIngredients()) {
-                    for (Ingredients remain : result.getRemains().getRemains()) {
-                        if (ingredient.getName().equals(remain.getName()) && remain.getCount() >= ingredient.getCount()) {
-                            allIngredients.add(true);
-                            neededIngredients.add(new Ingredients(ingredient.getName(), ingredient.getCount()));
+                    Ingredients remainIngredient = result.getRemains().getRemains().stream().filter(remain -> remain.getName().equals(ingredient.getName())).findAny().orElse(null);
+                    if (remainIngredient != null && ingredient.getCount() <= remainIngredient.getCount()) {
+                        neededIngredients.add(new Ingredients(ingredient.getName(), ingredient.getCount()));
+                    } else {
+                        finishDishes.setAllPrepared(true);
+                    }
+                }
+
+                if (!finishDishes.isAllPrepared()) {
+                    for (Ingredients neededIngredient : neededIngredients) {
+                        Ingredients remainIngredient = result.getRemains().getRemains().stream().filter(remain -> remain.getName().equals(neededIngredient.getName())).findAny().orElse(null);
+                        if (remainIngredient != null && remainIngredient.getCount() - neededIngredient.getCount() >= 0) {
+                            remainIngredient.setCount(remainIngredient.getCount() - neededIngredient.getCount());
+                        } else {
+                            finishDishes.setAllPrepared(true);
                         }
                     }
                 }
 
-                Optional<Boolean> allIngredientsSet = allIngredients.stream().filter(v -> false).findAny();
-
-                if (allIngredientsSet.isEmpty()) {
-                    for (Ingredients remain : result.getRemains().getRemains()) {
-                        for (Ingredients neededIngredient : neededIngredients) {
-                            if (remain.getName().equals(neededIngredient.getName())) {
-                                remain.setCount(remain.getCount() - neededIngredient.getCount());
-                            }
-                        }
-                    }
-
+                if (!finishDishes.isAllPrepared()) {
+                    finishDishes.setCount(finishDishes.getCount() + 1);
                     result.setFullCost(result.getFullCost() + dish.getPrice());
-                    if (finishDishesList.contains(new FinishDishes(dish.getName(), 1))) {
-                        int indexFinishDishesList = finishDishesList.indexOf(new FinishDishes(dish.getName()));
-                        finishDishesList.set(indexFinishDishesList, new FinishDishes(dish.getName(), finishDishesList.get(indexFinishDishesList).getCount() + 1));
-                    } else {
-                        finishDishesList.add(new FinishDishes(dish.getName(), 1));
-                    }
                 }
             }
 
             result.setFinishDishes(finishDishesList);
+
+            //todo сделать запись в файл
         }
     }
 }
