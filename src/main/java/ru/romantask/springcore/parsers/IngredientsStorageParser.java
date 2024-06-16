@@ -2,15 +2,12 @@ package ru.romantask.springcore.parsers;
 
 import org.springframework.stereotype.Component;
 import ru.romantask.springcore.Ingredients;
-import ru.romantask.springcore.exceptions.RecipeParserException;
+import ru.romantask.springcore.helpers.FileHelper;
 import ru.romantask.springcore.interfaces.Parser;
-
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Component
 public class IngredientsStorageParser implements Parser<Ingredients> {
@@ -25,17 +22,20 @@ public class IngredientsStorageParser implements Parser<Ingredients> {
 
     @Override
     public List<Ingredients> parse() throws IOException {
-        String data = getFileData();
+        String data = FileHelper.getFileData(getPath());
 
-        String[] supplies = data.split("\n");
-        List<Ingredients> ingredientsList = new ArrayList<>();
+        return Stream.of(data)
+                .flatMap(ingredientsArray -> Stream.of(ingredientsArray.split("\n")))
+                .map(IngredientsStorageParser::getIngredients)
+                .collect(Collectors.toList());
+    }
 
-        for (String supply : supplies) {
-            String[] splittedSupply = supply.split(":");
-            ingredientsList.add(new Ingredients(splittedSupply[0], Integer.parseInt(splittedSupply[1])));
-        }
-
-        return ingredientsList;
+    public static Ingredients getIngredients(String ingredientsArray) {
+        Ingredients ingredients = new Ingredients();
+        String[] ingredient = ingredientsArray.split(":");
+        ingredients.setName(ingredient[0]);
+        ingredients.setCount(Integer.parseInt(ingredient[1]));
+        return ingredients;
     }
 
     @Override
@@ -46,20 +46,5 @@ public class IngredientsStorageParser implements Parser<Ingredients> {
     @Override
     public String getPath() {
         return this.path;
-    }
-
-    private String getFileData() throws IOException {
-        String data = null;
-
-        File file = Path.of(getPath()).toFile();
-        if (!file.exists() || !file.isFile() || file.length() == 0 || !file.canRead()) {
-            throw new RecipeParserException("Отсутствует файл");
-        }
-
-        try (FileInputStream fileInputStream = new FileInputStream(file)) {
-            data = new String(fileInputStream.readAllBytes());
-        }
-
-        return data;
     }
 }

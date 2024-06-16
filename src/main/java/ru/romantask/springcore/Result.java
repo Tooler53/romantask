@@ -26,7 +26,7 @@ public class Result {
         this.fullCost = fullCost;
     }
 
-    public List getFinishDishes() {
+    public List<FinishDishes> getFinishDishes() {
         return finishDishes;
     }
 

@@ -2,14 +2,13 @@ package ru.romantask.springcore.parsers;
 
 import org.springframework.stereotype.Component;
 import ru.romantask.springcore.Dish;
-import ru.romantask.springcore.Ingredients;
 import ru.romantask.springcore.exceptions.RecipeParserException;
+import ru.romantask.springcore.helpers.FileHelper;
 import ru.romantask.springcore.interfaces.Parser;
-
 import java.io.*;
-import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Component
 public class RecipeParser implements Parser<Dish> {
@@ -24,39 +23,24 @@ public class RecipeParser implements Parser<Dish> {
 
     @Override
     public List<Dish> parse() throws RecipeParserException, IOException {
-        String data = getFileData();
+        String data = FileHelper.getFileData(getPath());
 
-        String[] dishesString = data.split("\n");
-        List<Dish> dishes = new ArrayList<>();
+        return Stream.of(data)
+                .flatMap(pair -> Stream.of(pair.split("\n")))//разбиваем блюда через переос строки
+                .map(dishesArray -> {
+                    Dish dish = new Dish();
+                    String[] element = dishesArray.split("\t");//разбиваем блюдо через табуляюцию и получаем название, стоимость и список ингридиентов
 
-        for (String dish : dishesString) {
-            String[] dishElem = dish.split("\t");
-            String[] ingredientsArray = dishElem[2].split(";");
-            List<Ingredients> ingredientsList = new ArrayList<>();
+                    dish.setName(element[0]);
+                    dish.setPrice(Integer.parseInt(element[1]));
+                    dish.setIngredients(Stream.of(element[2])
+                            .flatMap(ingredientArray -> Stream.of(ingredientArray.split(";")))//разбивает ингридинты через ;
+                            .map(IngredientsStorageParser::getIngredients)
+                            .collect(Collectors.toList()));
 
-            for (String inrg : ingredientsArray) {
-                ingredientsList.add(new Ingredients(inrg.split(":")[0], Integer.parseInt(inrg.split(":")[1])));
-            }
-
-            dishes.add(new Dish(dishElem[0], Integer.parseInt(dishElem[1]), ingredientsList));
-        }
-
-        return dishes;
-    }
-
-    private String getFileData() throws IOException {
-        String data;
-        File file = Path.of(getPath()).toFile();
-        if (!file.exists() || !file.isFile()) {
-            throw new RecipeParserException("Отсутствует файл");
-        }
-
-
-        try (FileInputStream fileInputStream = new FileInputStream(file)) {
-            data = new String(fileInputStream.readAllBytes());
-        }
-
-        return data;
+                    return dish;
+                })
+                .collect(Collectors.toList());
     }
 
     @Override

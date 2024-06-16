@@ -5,6 +5,7 @@ import java.util.Objects;
 public class FinishDishes {
     private String name;
     private int count;
+
     private boolean allPrepared = false;
 
     public FinishDishes() {
