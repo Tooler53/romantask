@@ -1,4 +1,4 @@
-package ru.romantask.springcore;
+package ru.romantask.springcore.models;
 
 public class Ingredients {
     private String name;

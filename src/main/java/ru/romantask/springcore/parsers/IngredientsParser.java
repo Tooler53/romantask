@@ -1,7 +1,7 @@
 package ru.romantask.springcore.parsers;
 
 import org.springframework.stereotype.Component;
-import ru.romantask.springcore.Ingredients;
+import ru.romantask.springcore.models.Ingredients;
 import ru.romantask.springcore.helpers.FileHelper;
 import ru.romantask.springcore.interfaces.Parser;
 import java.io.IOException;
@@ -10,13 +10,13 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Component
-public class IngredientsStorageParser implements Parser<Ingredients> {
+public class IngredientsParser implements Parser<Ingredients> {
     String path;
 
-    public IngredientsStorageParser() {
+    public IngredientsParser() {
     }
 
-    public IngredientsStorageParser(String path) {
+    public IngredientsParser(String path) {
         this.path = path;
     }
 
@@ -26,7 +26,7 @@ public class IngredientsStorageParser implements Parser<Ingredients> {
 
         return Stream.of(data)
                 .flatMap(ingredientsArray -> Stream.of(ingredientsArray.split("\n")))
-                .map(IngredientsStorageParser::getIngredients)
+                .map(IngredientsParser::getIngredients)
                 .collect(Collectors.toList());
     }
 

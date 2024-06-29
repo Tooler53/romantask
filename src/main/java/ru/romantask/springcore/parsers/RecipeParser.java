@@ -1,7 +1,7 @@
 package ru.romantask.springcore.parsers;
 
 import org.springframework.stereotype.Component;
-import ru.romantask.springcore.Dish;
+import ru.romantask.springcore.models.Dish;
 import ru.romantask.springcore.exceptions.RecipeParserException;
 import ru.romantask.springcore.helpers.FileHelper;
 import ru.romantask.springcore.interfaces.Parser;
@@ -35,7 +35,7 @@ public class RecipeParser implements Parser<Dish> {
                     dish.setPrice(Integer.parseInt(element[1]));
                     dish.setIngredients(Stream.of(element[2])
                             .flatMap(ingredientArray -> Stream.of(ingredientArray.split(";")))//разбивает ингридинты через ;
-                            .map(IngredientsStorageParser::getIngredients)
+                            .map(IngredientsParser::getIngredients)
                             .collect(Collectors.toList()));
 
                     return dish;

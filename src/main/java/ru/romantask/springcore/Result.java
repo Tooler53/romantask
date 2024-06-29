@@ -1,53 +1,39 @@
 package ru.romantask.springcore;
 
-import java.util.ArrayList;
+import ru.romantask.springcore.models.Dish;
+import ru.romantask.springcore.models.Ingredients;
+
 import java.util.List;
+import java.util.Map;
 
 public class Result {
-    private int fullCost;
-    private List<FinishDishes> finishDishes = new ArrayList<>();
+    private double totalCost;
 
-    private Remains remains;
+    private Map<String, Integer> cookedDishes;
 
-    public Result() {
+    private List<Ingredients> remainsIngredients;
+
+    public double getTotalCost() {
+        return totalCost;
     }
 
-    public Result(int fullCost, List<FinishDishes> finishDishes, Remains remains) {
-        this.fullCost = fullCost;
-        this.finishDishes = finishDishes;
-        this.remains = remains;
+    public void setTotalCost(double totalCost) {
+        this.totalCost = totalCost;
     }
 
-    public int getFullCost() {
-        return fullCost;
+    public Map<String, Integer> getCookedDishes() {
+        return cookedDishes;
     }
 
-    public void setFullCost(int fullCost) {
-        this.fullCost = fullCost;
+    public void setCookedDishes(Map<String, Integer> cookedDishes) {
+        this.cookedDishes = cookedDishes;
     }
 
-    public List<FinishDishes> getFinishDishes() {
-        return finishDishes;
+    public List<Ingredients> getRemainsIngredients() {
+        return remainsIngredients;
     }
 
-    public void setFinishDishes(List<FinishDishes> finishDishes) {
-        this.finishDishes = finishDishes;
-    }
-
-    public Remains getRemains() {
-        return remains;
-    }
-
-    public void setRemains(Remains remains) {
-        this.remains = remains;
-    }
-
-    @Override
-    public String toString() {
-        return "Result{" +
-               "fullCost=" + fullCost +
-               ", finishDishes=" + finishDishes +
-               ", remains=" + remains +
-               '}';
+    public void setRemainsIngredients(List<Ingredients> remainsIngredients) {
+        this.remainsIngredients = remainsIngredients;
     }
 }

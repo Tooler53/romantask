@@ -1,7 +1,8 @@
-package ru.romantask.springcore;
+package ru.romantask.springcore.models;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Dish {
     private String name;
@@ -49,5 +50,18 @@ public class Dish {
                ",\nprice=" + price +
                ",\ningredients=" + ingredients +
                "\n}";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Dish dish = (Dish) o;
+        return Objects.equals(name, dish.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name);
     }
 }
