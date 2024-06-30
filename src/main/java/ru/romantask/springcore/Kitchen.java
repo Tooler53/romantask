@@ -29,19 +29,19 @@ public class Kitchen {
     public Kitchen(Recipe recipe, IngredientsStorage ingredientsStorage) {
         this.recipe = recipe;
         this.ingredientsStorage = ingredientsStorage;
-//        Scanner input = new Scanner(System.in);
+        Scanner input = new Scanner(System.in);
 
         System.out.print("Введите путь до файла \"рецепты\": ");
-//        String recipePath = input.nextLine();
-        this.recipe.setParser(new RecipeParser(RECIPE_PATH));
+        String recipePath = input.nextLine();
+//        this.recipe.setParser(new RecipeParser(RECIPE_PATH));
 
         System.out.print("Введите путь до файла \"остатки ингредиентов\": ");
-//        String ingredientsStoragePath = input.nextLine();
-        this.ingredientsStorage.setParser(new IngredientsStorageParser(INGREDIENTS_PATH));
+        String ingredientsStoragePath = input.nextLine();
+//        this.ingredientsStorage.setParser(new IngredientsStorageParser(INGREDIENTS_PATH));
 
         System.out.print("Введите путь до файла \"результат\": ");
-//        resultPath = input.nextLine();
-        resultPath = RESULT_PATH;
+        resultPath = input.nextLine();
+//        resultPath = RESULT_PATH;
         System.out.println();
     }
 
