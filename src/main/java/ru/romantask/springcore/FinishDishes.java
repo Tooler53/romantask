@@ -6,8 +6,6 @@ public class FinishDishes {
     private String name;
     private int count;
 
-    private boolean allPrepared = false;
-
     public FinishDishes() {
     }
 
@@ -55,13 +53,5 @@ public class FinishDishes {
                "name='" + name + '\'' +
                ", count=" + count +
                '}';
-    }
-
-    public boolean isAllPrepared() {
-        return allPrepared;
-    }
-
-    public void setAllPrepared(boolean allPrepared) {
-        this.allPrepared = allPrepared;
     }
 }
